@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
         
         self.pos =  vector(self.rect.center)
         self.direction = vector()
-        self.speed = 300
+        self.speed = 400
         self.status = "down_idle" 
         
         self.hittbox =  self.rect.inflate(-self.rect.width*0.6,
@@ -41,10 +41,6 @@ class Player(pygame.sprite.Sprite):
             self.direction.y = 0
             
     def move(self, dt):
-        # normalize vector
-        if self.direction.magnitude() !=0:
-            self.direction = self.direction.normalize()
-            
         # horizontal movement
         self.pos.x += self.direction.x * self.speed * dt
         self.hittbox.centerx = round(self.pos.x)
