@@ -37,9 +37,27 @@ class Main:
   
 	def setup(self):
 		tmx_map = load_pygame("data\map.tmx")
+  
+		for x, y, surf in tmx_map.get_layer_by_name("BG").tiles():
+			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
+   
+		for x, y, surf in tmx_map.get_layer_by_name("BG Detail").tiles():
+			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
+
 		for x, y, surf in tmx_map.get_layer_by_name("Level").tiles():
 			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
-		self.player = Player(pos=(100, 200), groups=self.all_sprites)
+		
+		# objects 
+		for obj in tmx_map.get_layer_by_name("Entities"):
+			if obj.name == 'Player':
+				self.player = Player(pos=(obj.x, obj.y), groups=self.all_sprites)
+
+		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Bottom").tiles():
+			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
+
+		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Top").tiles():
+			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
+       
 		
 
 	def run(self):
