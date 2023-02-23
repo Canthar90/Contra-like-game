@@ -2,6 +2,7 @@ import pygame, sys
 from settings import * 
 from pytmx.util_pygame import load_pygame
 from tile import Tile
+from player import Player
 
 
 class Main:
@@ -19,6 +20,7 @@ class Main:
 		tmx_map = load_pygame("data\map.tmx")
 		for x, y, surf in tmx_map.get_layer_by_name("Level").tiles():
 			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites)
+		Player(pos=(100, 200), groups=self.all_sprites)
 		
 
 	def run(self):
