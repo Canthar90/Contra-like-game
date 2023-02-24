@@ -56,7 +56,7 @@ class Main:
 		for obj in tmx_map.get_layer_by_name("Entities"):
 			if obj.name == 'Player':
 				self.player = Player(pos=(obj.x, obj.y), groups=self.all_sprites,
-                         path=r"graphics\player")
+                         path=r"graphics\player", colliders=self.colission_sprites)
 
 		# details for the foreground objects
 		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Bottom").tiles():

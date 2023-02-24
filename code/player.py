@@ -5,7 +5,7 @@ from os import walk
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, path):
+    def __init__(self, pos, groups, path, colliders):
         super().__init__(groups)
         self.import_assets(path)
         self.frame_index = 0
@@ -18,12 +18,10 @@ class Player(pygame.sprite.Sprite):
         self.direction = vector()
         self.speed = 400
         
-        self.hittbox =  self.rect.inflate(-self.rect.width*0.6,
-                                          -self.rect.height*0.6)
         
         # collision
         self.old_rect =  self.rect.copy()
-        
+        self.collision_sprites =  colliders
         
         
     def import_assets(self, path):
@@ -68,17 +66,45 @@ class Player(pygame.sprite.Sprite):
             # self.status = "dow"
         else:
             self.direction.y = 0
+    
+    def collision(self, direction):
+        for sprite in self.collision_sprites.sprites():
+            if sprite.rect.colliderect(self.rect):
+                
+                if direction == "horizontal":
+                    # left collision
+                    if self.rect.left <= sprite.rect.right\
+                    and self.old_rect.left >= sprite.old_rect.right:
+                        
+                        self.rect.left = sprite.rect.right
+                    # right collision
+                    elif self.rect.right >= sprite.rect.left\
+                    and self.old_rect.right <= sprite.old_rect.left:
+                        
+                        self.rect.right = sprite.rect.left 
+                    self.pos.x = self.rect.x
+                else:
+                    if self.rect.bottom >= sprite.rect.top\
+                    and self.old_rect.bottom <= sprite.old_rect.top:
+
+                        self.rect.bottom = sprite.rect.top
+                    elif self.rect.top <= sprite.rect.bottom\
+                        and self.old_rect.top >= sprite.old_rect.bottom:
+                        
+                        self.rect.top =  sprite.rect.bottom
+                    self.pos.y = self.rect.y
             
     def move(self, dt):
         # horizontal movement
         self.pos.x += self.direction.x * self.speed * dt
-        self.hittbox.centerx = round(self.pos.x)
-        self.rect.centerx = self.hittbox.centerx
+        self.rect.x = round(self.pos.x)
+        self.collision("horizontal")
         
         # vertical movement
         self.pos.y += self.direction.y * self.speed * dt
-        self.hittbox.centery = round(self.pos.y)
-        self.rect.centery = self.hittbox.centery
+        self.rect.y = round(self.pos.y)
+        self.collision("vertical")
+        
         
     def update(self, dt):
         self.old_rect = self.rect.copy()
