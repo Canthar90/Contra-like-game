@@ -21,6 +21,9 @@ class Player(pygame.sprite.Sprite):
         self.hittbox =  self.rect.inflate(-self.rect.width*0.6,
                                           -self.rect.height*0.6)
         
+        # collision
+        self.old_rect =  self.rect.copy()
+        
         
         
     def import_assets(self, path):
@@ -57,14 +60,14 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
             
         # vertical input
-        # if keys[pygame.K_UP]:
-        #     self.direction.y = -1
-        #     self.status = "up"
-        # # elif keys[pygame.K_DOWN]:
-        # #     self.direction.y = 1
-        # #     self.status = "dow"
-        # else:
-        #     self.direction.y = 0
+        if keys[pygame.K_UP]:
+            self.direction.y = -1
+            # self.status = "up"
+        elif keys[pygame.K_DOWN]:
+            self.direction.y = 1
+            # self.status = "dow"
+        else:
+            self.direction.y = 0
             
     def move(self, dt):
         # horizontal movement
@@ -78,6 +81,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = self.hittbox.centery
         
     def update(self, dt):
+        self.old_rect = self.rect.copy()
         self.input()
         self.move(dt)
         self.animate(dt)
