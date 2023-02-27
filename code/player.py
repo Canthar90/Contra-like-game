@@ -23,6 +23,12 @@ class Player(pygame.sprite.Sprite):
         self.old_rect =  self.rect.copy()
         self.collision_sprites =  colliders
         
+        # vertical movement
+        self.gravity = 15
+        self.jump_speed = 1200
+        self.on_floor = False
+        self.duck = False
+        
         
     def import_assets(self, path):
         self.animations = {}
@@ -57,15 +63,13 @@ class Player(pygame.sprite.Sprite):
         else: 
             self.direction.x = 0
             
-        # vertical input
-        if keys[pygame.K_UP]:
-            self.direction.y = -1
-            # self.status = "up"
-        elif keys[pygame.K_DOWN]:
-            self.direction.y = 1
-            # self.status = "dow"
+        if keys[pygame.K_UP] and self.on_floor:
+            self.direction.y = - self.jump_speed
+            
+        if keys[pygame.K_DOWN]:
+            self.duck = True
         else:
-            self.direction.y = 0
+            self.duck = False
     
     def collision(self, direction):
         for sprite in self.collision_sprites.sprites():
@@ -86,13 +90,16 @@ class Player(pygame.sprite.Sprite):
                 else:
                     if self.rect.bottom >= sprite.rect.top\
                     and self.old_rect.bottom <= sprite.old_rect.top:
-
+                        self.on_floor = True
                         self.rect.bottom = sprite.rect.top
                     elif self.rect.top <= sprite.rect.bottom\
                         and self.old_rect.top >= sprite.old_rect.bottom:
                         
                         self.rect.top =  sprite.rect.bottom
                     self.pos.y = self.rect.y
+                    self.direction.y = 0
+        if self.on_floor and self.direction.y != 0:
+            self.on_floor = False
             
     def move(self, dt):
         # horizontal movement
@@ -101,7 +108,10 @@ class Player(pygame.sprite.Sprite):
         self.collision("horizontal")
         
         # vertical movement
-        self.pos.y += self.direction.y * self.speed * dt
+        # gravity
+        if not self.on_floor:
+            self.direction.y += self.gravity
+            self.pos.y += self.direction.y * dt
         self.rect.y = round(self.pos.y)
         self.collision("vertical")
         
