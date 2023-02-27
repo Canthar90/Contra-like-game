@@ -1,7 +1,7 @@
 import pygame, sys
 from settings import * 
 from pytmx.util_pygame import load_pygame
-from tile import Tile, CollisionTile
+from tile import Tile, CollisionTile, MovingPlatform
 from player import Player
 from pygame.math import Vector2 as vector
 
@@ -34,6 +34,7 @@ class Main:
 		# groups
 		self.all_sprites = AllSprites()
 		self.colission_sprites = pygame.sprite.Group()
+		self.platform_sprites = pygame.sprite.Group()
 		self.setup()
   
 	def setup(self):
@@ -65,8 +66,32 @@ class Main:
 		# foreground top details
 		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Top").tiles():
 			Tile(pos=(x*64, y*64), surf=surf, groups=self.all_sprites, z="FG Detail Top")
-       
+
+		self.platform_border_rects = []
+		for obj in tmx_map.get_layer_by_name("Platforms"):
+			if obj.name == "Platform":
+				MovingPlatform(pos=(obj.x, obj.y),
+                   surf=obj.image, 
+                   groups=[self.all_sprites, 
+                           self.colission_sprites, self.platform_sprites])
+			else: # border
+				border_rect = pygame.Rect(obj.x, obj.y, obj.width, obj.height)
+				self.platform_border_rects.append(border_rect)
 		
+	def platform_collisions(self):
+		for platform in self.platform_sprites.sprites():
+			for border in self.platform_border_rects:
+				# boune the platforms 
+				if platform.rect.colliderect(border):
+					if platform.direction.y < 0:
+						platform.rect.top = border.bottom
+						platform.pos.y = platform.rect.y
+						platform.direction.y = 1
+					else:
+						platform.rect.bottom = border.top
+						platform.pos.y = platform.rect.y
+						platform.direction.y = -1
+					
 
 	def run(self):
 		while True:
@@ -78,6 +103,7 @@ class Main:
 			dt = self.clock.tick() / 1000
 			self.display_surface.fill((249,131,103))
 
+			self.platform_collisions()
 			self.all_sprites.update(dt)
 			self.all_sprites.custom_draw(self.player)
 
