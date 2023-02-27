@@ -5,7 +5,7 @@ from os import walk
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, path, colliders):
+    def __init__(self, pos, groups, path, colliders, shoot):
         super().__init__(groups)
         self.import_assets(path)
         self.frame_index = 0
@@ -29,6 +29,17 @@ class Player(pygame.sprite.Sprite):
         self.on_floor = False
         self.duck = False
         self.moving_floor = None
+        
+        # interaction
+        self.shoot = shoot
+        # create a bullet timer
+        self.is_shooting = False
+        self.shoot_time = None
+        
+    def shoot_timer(self):
+        if self.is_shooting:    
+            if pygame.time.get_ticks() - self.shoot_time > 150:
+                self.is_shooting = False
         
     def get_status(self):
         # idle
@@ -92,6 +103,17 @@ class Player(pygame.sprite.Sprite):
         else:
             self.duck = False
     
+        if keys[pygame.K_SPACE] and not self.is_shooting:
+            direction = vector(1, 0) if self.status.split('_')[0] == 'right' else vector(-1, 0)
+            pos = self.rect.center + direction * 55
+            if not self.duck:
+                pos.y = pos.y - 13
+            else:
+                pos.y = pos.y + 6
+            self.shoot(pos, direction, self)
+            self.is_shooting = True
+            self.shoot_time = pygame.time.get_ticks()
+    
     def collision(self, direction):
         for sprite in self.collision_sprites.sprites():
             if sprite.rect.colliderect(self.rect):
@@ -151,5 +173,6 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.get_status()
         self.move(dt)
+        self.shoot_timer()
         self.check_contact()
         self.animate(dt)

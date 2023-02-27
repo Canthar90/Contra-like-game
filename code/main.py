@@ -4,6 +4,7 @@ from pytmx.util_pygame import load_pygame
 from tile import Tile, CollisionTile, MovingPlatform
 from player import Player
 from pygame.math import Vector2 as vector
+from bullet import Bullet
 
 
 
@@ -35,7 +36,14 @@ class Main:
 		self.all_sprites = AllSprites()
 		self.colission_sprites = pygame.sprite.Group()
 		self.platform_sprites = pygame.sprite.Group()
+		self.bullet_sprites = pygame.sprite.Group()
 		self.setup()
+  
+		# bullet images
+		self.bullet_surf = pygame.image.load(r"graphics\bullet.png").convert_alpha()
+  
+	def shoot(self, pos, direction, entity):
+		Bullet(pos, self.bullet_surf ,direction, [self.all_sprites, self.bullet_sprites])
   
 	def setup(self):
 		tmx_map = load_pygame("data\map.tmx")
@@ -57,7 +65,8 @@ class Main:
 		for obj in tmx_map.get_layer_by_name("Entities"):
 			if obj.name == 'Player':
 				self.player = Player(pos=(obj.x, obj.y), groups=self.all_sprites,
-                         path=r"graphics\player", colliders=self.colission_sprites)
+                         path=r"graphics\player", colliders=self.colission_sprites,
+                         shoot=self.shoot)
 
 		# details for the foreground objects
 		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Bottom").tiles():
