@@ -25,10 +25,29 @@ class Player(pygame.sprite.Sprite):
         
         # vertical movement
         self.gravity = 15
-        self.jump_speed = 1200
+        self.jump_speed = 1300
         self.on_floor = False
         self.duck = False
         
+
+    def get_status(self):
+        # idle
+        if self.direction.x == 0 and self.on_floor :
+            self.status = self.status.split("_")[0] + "_idle"
+        # jump
+        if self.direction.y != 0 and not self.on_floor:
+            self.status = self.status.split("_")[0] + "_jump"
+        # duck
+        if self.duck and self.direction.x == 0 and self.on_floor:
+            self.status = self.status.split("_")[0] + "_duck"
+        
+    def check_contact(self):
+        bottom_rect = pygame.Rect(0,0,self.rect.width,5)
+        bottom_rect.midtop = self.rect.midbottom  
+        for sprite in self.collision_sprites.sprites():
+            if sprite.rect.colliderect(bottom_rect):
+                if self.direction.y > 0:
+                    self.on_floor = True          
         
     def import_assets(self, path):
         self.animations = {}
@@ -109,9 +128,9 @@ class Player(pygame.sprite.Sprite):
         
         # vertical movement
         # gravity
-        if not self.on_floor:
-            self.direction.y += self.gravity
-            self.pos.y += self.direction.y * dt
+        
+        self.direction.y += self.gravity
+        self.pos.y += self.direction.y * dt
         self.rect.y = round(self.pos.y)
         self.collision("vertical")
         
@@ -119,5 +138,7 @@ class Player(pygame.sprite.Sprite):
     def update(self, dt):
         self.old_rect = self.rect.copy()
         self.input()
+        self.get_status()
         self.move(dt)
+        self.check_contact()
         self.animate(dt)
