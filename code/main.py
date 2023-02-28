@@ -45,6 +45,13 @@ class Main:
 	def shoot(self, pos, direction, entity):
 		Bullet(pos, self.bullet_surf ,direction, [self.all_sprites, self.bullet_sprites])
   
+	def bullet_collisions(self):
+		# obstacle 
+		for obstacle in self.colission_sprites.sprites():
+			pygame.sprite.spritecollide(obstacle, self.bullet_sprites, True)
+  
+		# entities
+  
 	def setup(self):
 		tmx_map = load_pygame("data\map.tmx")
 
@@ -122,6 +129,7 @@ class Main:
 			self.platform_collisions()
 			self.all_sprites.update(dt)
 			self.all_sprites.custom_draw(self.player)
+			self.bullet_collisions()
 
 			pygame.display.update()
 
