@@ -155,7 +155,7 @@ class Player(pygame.sprite.Sprite):
         
         self.direction.y += self.gravity
         self.pos.y += self.direction.y * dt
-        self.moving_floor = None
+        
         
         # glue the player to the platform
         if self.moving_floor and self.moving_floor.direction.y > 0 and self.direction.y > 0:
@@ -166,6 +166,7 @@ class Player(pygame.sprite.Sprite):
                     
         self.rect.y = round(self.pos.y)
         self.collision("vertical")
+        self.moving_floor = None
         
         
     def update(self, dt):
