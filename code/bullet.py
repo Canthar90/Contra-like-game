@@ -10,6 +10,7 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
         self.rect = self.image.get_rect(center=pos)
         self.z = LAYERS['main']
+        self.mask = pygame.mask.from_surface(self.image)
         
         # float based movement
         self.direction = direction

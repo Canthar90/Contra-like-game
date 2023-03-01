@@ -3,15 +3,14 @@ from settings import *
 from pygame.math import Vector2 as vector
 from os import walk
 from entity import Entity
+import sys
 
 
 class Player(Entity):
     def __init__(self, pos, groups, path, colliders, shoot):
         super().__init__(pos, path, groups, shoot)
         
-        
         # collision
-        
         self.collision_sprites =  colliders
         
         # vertical movement
@@ -19,6 +18,7 @@ class Player(Entity):
         self.jump_speed = 1400
         self.on_floor = False
         self.moving_floor = None
+        self.health = 10
         
                
     def get_status(self):
@@ -127,7 +127,11 @@ class Player(Entity):
         self.rect.y = round(self.pos.y)
         self.collision("vertical")
         self.moving_floor = None
-        
+    
+    def check_death(self):
+        if self.health <=0 :
+            pygame.quit()
+            sys.exit()    
         
     def update(self, dt):
         self.old_rect = self.rect.copy()
@@ -137,4 +141,7 @@ class Player(Entity):
         self.shoot_timer()
         self.check_contact()
         self.animate(dt)
+        self.blink()
         self.check_death()
+        self.invul_timer()
+        

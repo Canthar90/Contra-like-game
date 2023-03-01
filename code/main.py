@@ -74,7 +74,8 @@ class Main:
   
 		# entities
 		for sprite in self.vulnerable_sprites.sprites():
-			if pygame.sprite.spritecollide(sprite, self.bullet_sprites, True):
+			if pygame.sprite.spritecollide(sprite, self.bullet_sprites, 
+                                  True, pygame.sprite.collide_mask):
 				sprite.damage()
   
 	def setup(self):

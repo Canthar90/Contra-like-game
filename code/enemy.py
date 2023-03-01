@@ -13,7 +13,8 @@ class Enemy(Entity):
             if sprite.rect.collidepoint(self.rect.midbottom):
                 self.rect.bottom = sprite.rect.top
                     
-        self.cooldown = 580
+        self.cooldown = 780
+        self.invulnerability_delta = 150
                 
                 
     def get_status(self):
@@ -40,9 +41,12 @@ class Enemy(Entity):
             
     def update(self, dt):
         self.animate(dt)
+        self.blink()
         self.get_status()
         
         self.shoot_timer()
         self.check_fire()
         self.check_death()
+        self.invul_timer()
+        
         
