@@ -54,6 +54,8 @@ class Main:
 		self.colission_sprites = pygame.sprite.Group()
 		self.platform_sprites = pygame.sprite.Group()
 		self.bullet_sprites = pygame.sprite.Group()
+		self.vulnerable_sprites = pygame.sprite.Group()
+  
 		self.setup()
   
 		# bullet images
@@ -71,6 +73,9 @@ class Main:
 			pygame.sprite.spritecollide(obstacle, self.bullet_sprites, True)
   
 		# entities
+		for sprite in self.vulnerable_sprites.sprites():
+			if pygame.sprite.spritecollide(sprite, self.bullet_sprites, True):
+				sprite.damage()
   
 	def setup(self):
 		tmx_map = load_pygame("data\map.tmx")
@@ -91,13 +96,17 @@ class Main:
 		# objects 
 		for obj in tmx_map.get_layer_by_name("Entities"):
 			if obj.name == 'Player':
-				self.player = Player(pos=(obj.x, obj.y), groups=self.all_sprites,
-                         path=r"graphics\player", colliders=self.colission_sprites,
+				self.player = Player(pos=(obj.x, obj.y), 
+                         groups=[self.all_sprites, self.vulnerable_sprites],
+                         path=r"graphics\player", 
+                         colliders=self.colission_sprites,
                          shoot=self.shoot)
 			if obj.name == "Enemy":
 				Enemy(pos=(obj.x, obj.y), path=r"graphics\enemies",
-          			groups=self.all_sprites, shoot=self.shoot,
-          			player=self.player, collison_sprites=self.colission_sprites)
+          			groups=[self.all_sprites, self.vulnerable_sprites], 
+             		shoot=self.shoot,
+          			player=self.player, 
+             		collison_sprites=self.colission_sprites)
 
 		# details for the foreground objects
 		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Bottom").tiles():

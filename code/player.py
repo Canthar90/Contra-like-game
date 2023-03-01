@@ -65,7 +65,7 @@ class Player(Entity):
     
         if keys[pygame.K_SPACE] and not self.is_shooting:
             direction = vector(1, 0) if self.status.split('_')[0] == 'right' else vector(-1, 0)
-            pos = self.rect.center + direction * 55
+            pos = self.rect.center + direction * 60
             if not self.duck:
                 pos.y = pos.y - 13
             else:
@@ -137,3 +137,4 @@ class Player(Entity):
         self.shoot_timer()
         self.check_contact()
         self.animate(dt)
+        self.check_death()

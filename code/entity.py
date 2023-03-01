@@ -30,6 +30,16 @@ class Entity(pygame.sprite.Sprite):
         self.shoot_time = None
         self.duck = False
         self.cooldown = 200
+        
+        # health
+        self.health = 3
+    
+    def damage(self):
+        self.health -= 1
+        
+    def check_death(self):
+        if self.health <= 0:
+            self.kill()
     
     def animate(self, dt):
         self.frame_index += 7*dt
