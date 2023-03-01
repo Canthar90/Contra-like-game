@@ -2,45 +2,25 @@ import pygame
 from settings import *
 from pygame.math import Vector2 as vector
 from os import walk
+from entity import Entity
 
 
-class Player(pygame.sprite.Sprite):
+class Player(Entity):
     def __init__(self, pos, groups, path, colliders, shoot):
-        super().__init__(groups)
-        self.import_assets(path)
-        self.frame_index = 0
-        self.status = "right_idle" 
-        
-        self.image = self.animations[self.status][self.frame_index]
-        self.rect = self.image.get_rect(topleft=pos)
-        
-        self.pos =  vector(self.rect.center)
-        self.direction = vector()
-        self.speed = 400
+        super().__init__(pos, path, groups, shoot)
         
         
         # collision
-        self.old_rect =  self.rect.copy()
+        
         self.collision_sprites =  colliders
         
         # vertical movement
         self.gravity = 15
         self.jump_speed = 1400
         self.on_floor = False
-        self.duck = False
         self.moving_floor = None
         
-        # interaction
-        self.shoot = shoot
-        # create a bullet timer
-        self.is_shooting = False
-        self.shoot_time = None
-        
-    def shoot_timer(self):
-        if self.is_shooting:    
-            if pygame.time.get_ticks() - self.shoot_time > 150:
-                self.is_shooting = False
-        
+               
     def get_status(self):
         # idle
         if self.direction.x == 0 and self.on_floor :
@@ -62,26 +42,6 @@ class Player(pygame.sprite.Sprite):
                 if hasattr(sprite, "direction"):
                     self.moving_floor = sprite        
         
-    def import_assets(self, path):
-        self.animations = {}
-        for index, folder in enumerate(walk(path)):
-            if index == 0:
-                for name in folder[1]:
-                    self.animations[name] = []
-            else: 
-                for name in sorted(folder[2], key=lambda string: int(string.split('.')[0])):
-                    loc_path = folder[0].replace("\\","/") + "/" + name
-                    surf = pygame.image.load(loc_path).convert_alpha()
-                    key = folder[0].split('\\')[2]
-                    self.animations[key].append(surf)
-    
-    def animate(self, dt):
-        self.frame_index += 7*dt
-        if self.frame_index >= len(self.animations[self.status]):
-            self.frame_index = 0
-            
-        self.image = self.animations[self.status][int(self.frame_index)]
-    
     def input(self):
         keys = pygame.key.get_pressed()
         
