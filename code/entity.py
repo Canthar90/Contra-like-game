@@ -29,6 +29,7 @@ class Entity(pygame.sprite.Sprite):
         self.is_shooting = False
         self.shoot_time = None
         self.duck = False
+        self.cooldown = 200
     
     def animate(self, dt):
         self.frame_index += 7*dt
@@ -39,7 +40,7 @@ class Entity(pygame.sprite.Sprite):
     
     def shoot_timer(self):
         if self.is_shooting:    
-            if pygame.time.get_ticks() - self.shoot_time > 150:
+            if pygame.time.get_ticks() - self.shoot_time > self.cooldown:
                 self.is_shooting = False
         
     def import_assets(self, path):

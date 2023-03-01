@@ -5,7 +5,7 @@ from tile import Tile, CollisionTile, MovingPlatform
 from player import Player
 from pygame.math import Vector2 as vector
 from bullet import Bullet, FireAnimation
-
+from enemy import Enemy
 
 
 class AllSprites(pygame.sprite.Group):
@@ -94,6 +94,10 @@ class Main:
 				self.player = Player(pos=(obj.x, obj.y), groups=self.all_sprites,
                          path=r"graphics\player", colliders=self.colission_sprites,
                          shoot=self.shoot)
+			if obj.name == "Enemy":
+				Enemy(pos=(obj.x, obj.y), path=r"graphics\enemies",
+          			groups=self.all_sprites, shoot=self.shoot,
+          			player=self.player, collison_sprites=self.colission_sprites)
 
 		# details for the foreground objects
 		for x, y, surf in tmx_map.get_layer_by_name("FG Detail Bottom").tiles():
