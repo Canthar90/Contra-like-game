@@ -65,9 +65,18 @@ class Main:
 		self.fire_surfs = [pygame.image.load(r"graphics\fire\0.png").convert_alpha(),
                      pygame.image.load(r"graphics\fire\1.png").convert_alpha()]
   
+		# music
+		self.music = pygame.mixer.Sound("audio\music.wav")
+		self.music.set_volume(0.35)
+		self.music.play(loops=-1)
+  
+		self.shoot_sound = pygame.mixer.Sound(r"audio\bullet.wav")
+		self.shoot_sound.set_volume(0.2) 
+  
 	def shoot(self, pos, direction, entity):
 		Bullet(pos, self.bullet_surf ,direction, [self.all_sprites, self.bullet_sprites])
 		FireAnimation(entity, self.fire_surfs, direction, self.all_sprites)
+		self.shoot_sound.play()
   
 	def bullet_collisions(self):
 		# obstacle 
